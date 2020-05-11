@@ -3,14 +3,22 @@
     <div class="user">
       <div class="user__avatar">
         <img
-          class="user__avatar--img"
+          class="user__avatar--img disable-select"
           :src="userData.avatar"
           alt="User Profile Picture"
         />
       </div>
       <div class="user__wrap">
         <div class="user__name">
-          <h2 class="name">{{ userData.name }}</h2>
+          <h2 class="name">
+            <a
+              class="name--link"
+              :href="url + userData.username"
+              target="_blank"
+            >
+              {{ userData.name }}
+            </a>
+          </h2>
           <span class="username">@{{ userData.username }}</span>
         </div>
         <div class="user__social">
@@ -94,6 +102,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      url: "https://github.com/"
+    };
+  },
   props: {
     userData: {
       type: Object
@@ -107,6 +120,13 @@ export default {
   content: "";
   display: table;
   clear: both;
+}
+
+.disable-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .user {
@@ -130,6 +150,13 @@ export default {
 
 .user__name .username {
   color: rgb(160, 160, 160);
+}
+
+.name--link,
+.name--link:hover,
+.name--link:visited {
+  color: #000;
+  text-decoration: none;
 }
 
 .user__social {

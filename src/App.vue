@@ -2,7 +2,9 @@
   <div id="app">
     <div class="header">
       <div class="navbar">
-        <img class="logo" src="./assets/fluidicon.png" alt="" />
+        <a href="/">
+          <img class="logo" src="./assets/fluidicon.png" alt="" />
+        </a>
         <input
           v-model="inputText"
           type="text"
@@ -72,7 +74,6 @@ export default {
   data() {
     return {
       active: "Pinned",
-      bottom: false,
       error: "",
       inputText: "",
       isLoading: false,
@@ -84,13 +85,6 @@ export default {
   computed: {
     pinnedActive() {
       return this.active === "Pinned";
-    }
-  },
-  watch: {
-    bottom(bottom) {
-      if (bottom) {
-        this.fetchRepo(this.inputText, this.after);
-      }
     }
   },
   components: {
@@ -115,15 +109,14 @@ export default {
           }
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
         });
     },
     isBottomVisible() {
-      const scrollY = window.scrollY;
-      const visible = document.documentElement.clientHeight;
-      const pageHeight = document.documentElement.scrollHeight;
-      const bottomOfPage = visible + scrollY >= pageHeight;
-      return bottomOfPage || pageHeight < visible;
+      return (
+        document.documentElement.scrollTop + window.innerHeight >=
+        document.documentElement.offsetHeight - 1000
+      );
     },
     fetchRepo(username, after) {
       if (after !== "") {
@@ -153,7 +146,7 @@ export default {
             this.isRepoLoading = false;
           })
           .catch(err => {
-            console.log(err);
+            console.error(err);
           });
       }
     }
@@ -161,7 +154,9 @@ export default {
   created() {
     window.addEventListener("scroll", () => {
       if (this.active === "Repositories") {
-        this.bottom = this.isBottomVisible();
+        if (this.isBottomVisible() && this.isRepoLoading === false) {
+          this.fetchRepo(this.inputText, this.after);
+        }
       }
     });
   }

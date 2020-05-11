@@ -76,7 +76,12 @@ export default {
         "C++": "#f34b7d",
         Python: "#3572A5",
         Rust: "#dea584",
-        TypeScript: "#2b7489"
+        TypeScript: "#2b7489",
+        Java: "#b07219",
+        Kotlin: "#F18E33",
+        Vue: "#2c3e50",
+        Ruby: "#701516",
+        Swift: "#ffac45"
       }
     };
   },
