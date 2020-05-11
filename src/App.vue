@@ -104,11 +104,10 @@ export default {
       this.isLoading = true;
       FetchService.getUser(this.inputText)
         .then(({ data }) => {
+          this.isLoading = false;
           if (data.error) {
             this.error = "User does not exist, Please enter correct username";
-          }
-          this.isLoading = false;
-          if (data.username === this.inputText) {
+          } else {
             this.active = "Pinned";
             this.user = data;
             this.after = data.repoData.after;
