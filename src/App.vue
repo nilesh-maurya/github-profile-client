@@ -8,7 +8,7 @@
           type="text"
           class="search"
           placeholder="Search username here"
-          @keydown.enter="fetchUser"
+          @keypress.13="fetchUser"
         />
       </div>
     </div>
@@ -103,7 +103,8 @@ export default {
       this.error = "";
       this.isLoading = true;
       FetchService.getUser(this.inputText)
-        .then(({ data }) => {
+        .then(res => {
+          const data = res.data;
           this.isLoading = false;
           if (data.error) {
             this.error = "User does not exist, Please enter correct username";
@@ -191,7 +192,7 @@ export default {
   bottom: 0;
   right: 0;
   text-align: center;
-  background-color: rgba(243, 243, 243, 0.6);
+  background-color: rgba(209, 209, 209, 0.8);
 }
 
 .loading__container {
