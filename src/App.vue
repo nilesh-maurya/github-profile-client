@@ -17,6 +17,9 @@
         <Loader></Loader>
       </div>
     </div>
+    <div class="error" v-if="error">
+      <span class="error-msg">{{ error }}</span>
+    </div>
     <div v-if="user" class="container">
       <user-info :userData="user"></user-info>
       <section class="repo-detail">
@@ -62,6 +65,7 @@
 import UserInfo from "./components/UserInfo.vue";
 import Loader from "./components/Loader.vue";
 import Repo from "./components/Repo.vue";
+import FetchService from "./Services/FetchService.js";
 
 export default {
   name: "App",
@@ -69,6 +73,7 @@ export default {
     return {
       active: "Pinned",
       bottom: false,
+      error: "",
       inputText: "",
       isLoading: false,
       isRepoLoading: false,
@@ -95,12 +100,13 @@ export default {
   },
   methods: {
     fetchUser() {
+      this.error = "";
       this.isLoading = true;
-      fetch(`https://github-profile-api.now.sh/api/${this.inputText}`)
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
+      FetchService.getUser(this.inputText)
+        .then(({ data }) => {
+          if (data.error) {
+            this.error = "User does not exist, Please enter correct username";
+          }
           this.isLoading = false;
           if (data.username === this.inputText) {
             this.active = "Pinned";
@@ -122,17 +128,28 @@ export default {
     fetchRepo(username, after) {
       if (after !== "") {
         this.isRepoLoading = true;
-        fetch(
-          `https://github-profile-api.now.sh/api/${this.inputText}/repos?after=${after}`
-        )
-          .then(response => {
-            return response.json();
-          })
+        FetchService.getRepos(this.inputText, this.after)
           .then(res => {
-            this.after = res.repoData.after;
-            res.repoData.repos.forEach(repo => {
+            this.after = res.data.repoData.after;
+
+            // create array of repo names
+            const repoNameArray = [];
+            this.user.repoData.repos.forEach(repo => {
+              repoNameArray.push(repo.repoName);
+            });
+
+            // filter repo based on if there are already present in reactive repos
+            // if not present then add those to list and v-for will update the dom
+            // this won't update if on multiple scrolls same api calls happens
+            const fetchedRepo = res.data.repoData.repos.filter(repo => {
+              return repoNameArray.indexOf(repo.repoName) === -1;
+            });
+
+            fetchedRepo.forEach(repo => {
               this.user.repoData.repos.push(repo);
             });
+
+            // remove the loader
             this.isRepoLoading = false;
           })
           .catch(err => {
@@ -170,7 +187,7 @@ export default {
 
 .loading {
   position: absolute;
-  top: 0;
+  top: 60px;
   left: 0;
   bottom: 0;
   right: 0;
@@ -191,6 +208,18 @@ export default {
   padding-top: 25px;
   display: flex;
   justify-content: center;
+}
+
+.error {
+  display: block;
+  text-align: center;
+}
+
+.error-msg {
+  display: inline-block;
+  margin: 10px auto;
+  padding: 10px;
+  border: 3px solid red;
 }
 
 .header {
