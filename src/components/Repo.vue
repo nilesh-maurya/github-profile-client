@@ -56,6 +56,9 @@
         </svg>
         <span class="item-value count">{{ repo.forkCount }}</span>
       </div>
+      <div class="repo__last-updated repo__info--item" v-if="repo.lastUpdated">
+        Updated {{ repo.lastUpdated }}
+      </div>
     </div>
   </div>
 </template>
