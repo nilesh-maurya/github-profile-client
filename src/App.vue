@@ -109,6 +109,7 @@ export default {
           }
         })
         .catch(err => {
+          // eslint-disable-next-line
           console.error(err);
         });
     },
@@ -123,7 +124,6 @@ export default {
         this.isRepoLoading = true;
         FetchService.getRepos(this.inputText, this.next, this.user.type)
           .then(res => {
-            console.log(res.data);
             this.next = res.data.repoData.next;
 
             // create array of repo names
@@ -139,7 +139,6 @@ export default {
               return repoNameArray.indexOf(repo.repoName) === -1;
             });
 
-            console.log(fetchedRepo);
             fetchedRepo.forEach(repo => {
               this.user.repoData.repos.push(repo);
             });
@@ -148,6 +147,7 @@ export default {
             this.isRepoLoading = false;
           })
           .catch(err => {
+            // eslint-disable-next-line
             console.error(err);
           });
       }
