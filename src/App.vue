@@ -79,7 +79,7 @@ export default {
       isLoading: false,
       isRepoLoading: false,
       user: "",
-      after: ""
+      next: ""
     };
   },
   computed: {
@@ -105,7 +105,7 @@ export default {
           } else {
             this.active = "Pinned";
             this.user = data;
-            this.after = data.repoData.after;
+            this.next = data.repoData.next;
           }
         })
         .catch(err => {
@@ -118,12 +118,13 @@ export default {
         document.documentElement.offsetHeight - 1000
       );
     },
-    fetchRepo(username, after) {
-      if (after !== "") {
+    fetchRepo(username, next) {
+      if (next !== "") {
         this.isRepoLoading = true;
-        FetchService.getRepos(this.inputText, this.after)
+        FetchService.getRepos(this.inputText, this.next, this.user.type)
           .then(res => {
-            this.after = res.data.repoData.after;
+            console.log(res.data);
+            this.next = res.data.repoData.next;
 
             // create array of repo names
             const repoNameArray = [];
@@ -138,6 +139,7 @@ export default {
               return repoNameArray.indexOf(repo.repoName) === -1;
             });
 
+            console.log(fetchedRepo);
             fetchedRepo.forEach(repo => {
               this.user.repoData.repos.push(repo);
             });
@@ -155,7 +157,7 @@ export default {
     window.addEventListener("scroll", () => {
       if (this.active === "Repositories") {
         if (this.isBottomVisible() && this.isRepoLoading === false) {
-          this.fetchRepo(this.inputText, this.after);
+          this.fetchRepo(this.inputText, this.next);
         }
       }
     });

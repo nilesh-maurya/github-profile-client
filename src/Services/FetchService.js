@@ -13,7 +13,7 @@ export default {
   getUser(username) {
     return apiClient.get(`/api/${username}`);
   },
-  getRepos(username, after) {
-    return apiClient.get(`/api/${username}/repos?after=${after}`);
+  getRepos(username, next, type) {
+    return apiClient.get(`/api/${username}/repos?next=${next}&type=${type}`);
   }
 };
